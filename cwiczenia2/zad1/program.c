@@ -18,8 +18,8 @@ void generate(const char* file_name, const int record_count, const int record_si
 void sort_sys(const char *file_name, const int record_count, const int record_size);
 void sort_lib(const char *file_name, const int record_count, const int record_size);
 
-void copy_sys(const char *src_path, const char *dest_path, int record_count, int buffer_size);
-void copy_lib(const char *src_path, const char *dest_path, int record_count, int buffer_size);
+void copy_sys(const char *source, const char *destination, int record_count, int buffer_size);
+void copy_lib(const char *source, const char *destination, int record_count, int buffer_size);
 
 
 print_array(int *array, int length)
@@ -61,16 +61,28 @@ int main(int argc, char** argv) {
         } else {
             sort_lib(file_name, record_count, record_size);
         };
-        puts(type);
+        // puts(type);
 
     } else if(should_copy) {
         char** src_path = argv[2];
-        char** dest_path = argv[2];
+        char** dest_path = argv[3];
         int record_count;
         int buffer_size;
+        char** type = argv[5];
 
-        sscanf(argv[3], "%i", &record_count);
-        sscanf(argv[4], "%i", &buffer_size);
+        sscanf(argv[4], "%i", &record_count);
+        sscanf(argv[5], "%i", &buffer_size);
+
+        // puts(src_path);
+        // puts(dest_path);
+        // printf("%d", record_count);
+        // printf("%d", buffer_size);
+
+        if(strcmp("sys", type) == 0) {
+            copy_sys(src_path, dest_path, record_count, buffer_size);
+        } else {
+            copy_lib(src_path, dest_path, record_count, buffer_size);
+        };
     }
 
     // bool should_generate = strcmp("generate", argv[1]) == 0;
@@ -83,6 +95,30 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+
+
+void copy_sys(const char *source, const char *destination, int record_count, int buffer_size) {
+    int src_file = open(source, O_RDONLY);
+    int dest_file = open(destination, O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR | S_IWUSR);
+    
+    unsigned char buffer[buffer_size + 1];
+    for (int i = 0; i < record_count; i++) {
+        read(src_file, &buffer, sizeof(buffer));
+        write(dest_file, &buffer, sizeof(buffer));
+    }
+}
+
+void copy_lib(const char *source, const char *destination, int record_count, int buffer_size) {
+    FILE *src_file = fopen(source, "r");
+    FILE *dest_file = fopen(destination, "w");
+
+    unsigned char buffer[buffer_size + 1];
+    for (int i = 0; i < record_count; i++) {
+        fread(&buffer, sizeof(unsigned char), (size_t) buffer_size + 1, src_file);
+        fwrite(&buffer, sizeof(unsigned char), (size_t) buffer_size + 1, dest_file);
+    }
+}
+
 
 void sort_sys(const char *file_name, const int record_count, const int record_size) {
     int file = open(file_name, O_RDWR);

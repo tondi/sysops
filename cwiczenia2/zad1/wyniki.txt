@@ -1,5 +1,5 @@
 
-wyniki time dla rekordów o rozmiarze
+Sortowanie dla rozmiaru rekordu -
 
 1 bajta:
 
@@ -36,3 +36,65 @@ wyniki time dla rekordów o rozmiarze
 
 ./program sort dane1_lib 3000 8192 lib  6,62s user 10,90s system 99% cpu 17,547 total
 ./program sort dane1_sys 3000 8192 sys  4,58s user 11,48s system 99% cpu 16,100 total
+
+
+Kopiowanie dla rozmiaru rekordu -
+
+1 bajta:
+
+# 2 GB file, 1 bln records
+./program generate dane1 1000000000 1
+
+./program copy dane1_lib dane2_lib 1000000000 1 lib  88,98s user 3,17s system 99% cpu 1:32,58 total
+./program copy dane1_sys dane2_sys 1000000000 1 sys  89,41s user 3,25s system 99% cpu 1:33,01 total
+
+./program copy dane1_lib dane2_lib 100000000 1 lib  8,99s user 0,32s system 96% cpu 9,642 total
+./program copy dane1_sys dane2_sys 100000000 1 sys  8,89s user 0,30s system 99% cpu 9,274 total
+
+4 bajtow:
+./program copy dane1_lib dane2_lib 50000000 4 lib  4,71s user 0,39s system 99% cpu 5,130 total
+./program copy dane1_sys dane2_sys 50000000 4 sys  4,62s user 0,36s system 99% cpu 5,011 total
+
+./program copy dane1_lib dane2_lib 100000000 4 lib  9,03s user 0,72s system 99% cpu 9,796 total
+./program copy dane1_sys dane2_sys 100000000 4 sys  9,02s user 0,72s system 99% cpu 9,833 total
+
+512 bajtow:
+
+./program copy dane1_lib dane2_lib 5000000 512 lib  1,04s user 4,04s system 92% cpu 5,506 total
+./program copy dane1_sys dane2_sys 5000000 512 sys  1,03s user 3,85s system 96% cpu 5,052 total
+
+./program copy dane1_lib dane2_lib 10000000 512 lib  2,03s user 7,97s system 93% cpu 10,707 total
+./program copy dane1_sys dane2_sys 10000000 512 sys  1,89s user 8,41s system 88% cpu 11,670 total
+
+
+4096 bajtow:
+
+4,11 GB
+./program copy dane1_lib dane2_lib 1000000 4096 lib  0,93s user 7,17s system 92% cpu 8,730 total
+./program copy dane1_sys dane2_sys 1000000 4096 sys  0,94s user 7,15s system 93% cpu 8,611 total
+
+10,25GB
+./program copy dane1_lib dane2_lib 2500000 4096 lib  2,47s user 19,26s system 94% cpu 23,077 total
+./program copy dane1_sys dane2_sys 2500000 4096 sys  2,40s user 18,38s system 93% cpu 22,172 total
+
+
+8192 bajtow:
+
+4,11GB
+./program copy dane1_lib dane2_lib 500000 8192 lib  0,65s user 6,88s system 93% cpu 8,017 total
+./program copy dane1_sys dane2_sys 500000 8192 sys  0,69s user 7,13s system 93% cpu 8,353 total
+
+8,12GB
+
+./program copy dane1_lib dane2_lib 1000000 8192 lib  1,35s user 14,70s system 96% cpu 16,703 total
+./program copy dane1_sys dane2_sys 1000000 8192 sys  1,36s user 13,71s system 89% cpu 16,856 total
+
+Komentarz:
+Dla prawie kazdego typu sortowania szybsza okazala sie implementacja wykorzystujaca funkcje systemowe.
+Jedynym odstepstwem bylo sortowanie pliku z 3000 rekordow rozmiaru 8192 bajtow, z wynikami
+./program sort dane1_lib 3000 8192 lib  6,62s user 10,90s system 99% cpu 17,547 total
+./program sort dane1_sys 3000 8192 sys  4,58s user 11,48s system 99% cpu 16,100 total
+Pokazuje to, ze funkcje systemowe operaujace na plikach w krytycznych przypadkach zapewniaja wieksza wydajnosc.
+
+W przypadku kopiowania plikow, roznice miedzy implementacjami sys/lib znajduja sie na granicy bledu pomiarowego.
+Pomimo generowania bardzo duzych plikow rzedu 10GB, wyniki nie pozwalaja jednoznacznie stwierdzic ktora implementacja jest szybsza podczas kopiowania plikow.
