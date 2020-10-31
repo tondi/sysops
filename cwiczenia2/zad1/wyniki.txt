@@ -1,0 +1,38 @@
+
+wyniki time dla rekordów o rozmiarze
+
+1 bajta:
+
+./program sort dane1_lib 2500 1 lib  5,11s user 4,79s system 99% cpu 9,914 total
+./program sort dane1_sys 2500 1 sys  2,54s user 3,43s system 99% cpu 5,983 total
+
+./program sort dane1_lib 4000 1 lib  12,95s user 11,69s system 99% cpu 24,671 total
+./program sort dane1_sys 4000 1 sys  6,51s user 8,75s system 99% cpu 15,292 total
+
+4 bajtow:
+./program sort dane1_lib 2500 4 lib  5,49s user 5,66s system 99% cpu 11,199 total
+./program sort dane1_sys 2500 4 sys  2,50s user 3,43s system 99% cpu 5,940 total
+
+./program sort dane1_lib 3000 4 lib  7,53s user 7,39s system 99% cpu 14,967 total
+./program sort dane1_sys 3000 4 sys  3,73s user 5,07s system 99% cpu 8,823 total
+
+512 bajtow:
+./program sort dane1_lib 2500 512 lib  5,21s user 5,43s system 99% cpu 10,661 total
+./program sort dane1_sys 2500 512 sys  2,65s user 3,86s system 99% cpu 6,543 total
+
+./program sort dane1_lib 3000 512 lib  7,40s user 7,68s system 99% cpu 15,109 total
+./program sort dane1_lib 3000 512 sys  3,71s user 5,33s system 99% cpu 9,067 total
+
+4096 bajtow:
+./program sort dane1_lib 2500 4096 lib  4,27s user 5,42s system 99% cpu 9,725 total
+./program sort dane1_sys 2500 4096 sys  2,60s user 5,00s system 99% cpu 7,622 total
+
+./program sort dane1_lib 3000 4096 lib  6,24s user 7,91s system 99% cpu 14,187 total
+./program sort dane1_sys 3000 4096 sys  4,08s user 8,01s system 99% cpu 12,121 total
+
+8192 bajtow:
+./program sort dane1_lib 2500 8192 lib  4,64s user 7,78s system 99% cpu 12,453 total
+./program sort dane1_sys 2500 8192 sys  3,16s user 8,15s system 99% cpu 11,348 total
+
+./program sort dane1_lib 3000 8192 lib  6,62s user 10,90s system 99% cpu 17,547 total
+./program sort dane1_sys 3000 8192 sys  4,58s user 11,48s system 99% cpu 16,100 total
