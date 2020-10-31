@@ -54,3 +54,5 @@ dkms.conf
 # added by me
 *.zip
 .idea
+*
+!*.c
