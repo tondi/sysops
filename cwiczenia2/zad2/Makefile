@@ -1,5 +1,6 @@
 start: 
-	gcc -Wall -D st_mtim=st_mtimespec -o find find.c
+	# gcc -Wall -D st_mtim=st_mtimespec -o find find.c
+	gcc -Wall -D st_mtim=st_mtimespec -o find_nftw find_nftw.c
 
 generate:
 	mkdir test

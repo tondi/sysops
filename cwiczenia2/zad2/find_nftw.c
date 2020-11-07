@@ -10,6 +10,10 @@
 #include <stdbool.h>
 
 
+// can you ever forgive me?
+char *operator;
+char *date;
+
 /**
  * Parses to timestamp from format
  * <hh:mm:ss DD:MM:YYYY>
@@ -87,58 +91,64 @@ bool modification_date_matches(time_t* file_timestamp, char* requested_date, cha
 }
 
 
-void find_recursively(char *path, char *operator, char *date) {
+int nftw_callback(const char *path, const struct stat *sb, int typeflag, struct FTW *ftwbuf) {
 
-    struct dirent *dent;
-    char buffer[50];
-    strcpy(buffer, path);
+    if (!S_ISREG(sb->st_mode) || S_ISLNK(sb->st_mode)) {
+        return 0;
+    }
 
-    // puts(path);
+    // struct dirent *dent;
+    // char buffer[50];
+    // strcpy(buffer, path);
 
-    DIR *dir;
-    dir = opendir(buffer);
+    // puts("test");
+    // puts(ftwbuf->base);
+
+    // DIR *dir;
+    // dir = opendir(buffer);
     
-    struct stat *sb = malloc(sizeof stat);
+    // struct stat *sb = malloc(sizeof stat);
     
 
-    if (dir != NULL)
-    {
-        while ((dent = readdir(dir)) != NULL)
-        {
+    // if (dir != NULL)
+    // {
+    //     while ((dent = readdir(dir)) != NULL)
+    //     {
 
             // name
-            char *current_working_directory = malloc(sizeof(char) * 256);
+            // char *current_working_directory = malloc(sizeof(char) * 256);
 
-            chdir(path);
-            getcwd(current_working_directory, 256);
+            // chdir(path);
+            // getcwd(current_working_directory, 256);
 
 
-            if (lstat(dent->d_name, sb) == -1)
-            {
-                puts(dent->d_name);
-                perror("lstat");
-                exit(EXIT_FAILURE);
-            }
-
-            if (S_ISDIR(sb->st_mode) && strcmp(dent->d_name, ".") != 0 && strcmp(dent->d_name, "..") != 0) {
-                find_recursively(dent->d_name, operator, date);
-            }
+            // if (S_ISDIR(sb->st_mode)) {
+            //     return 0;
+            // }
 
             if(!modification_date_matches(&sb->st_mtime, date, operator)) {
-                continue;
+                return 0;
             };
 
-            puts(strcat(strcat(current_working_directory, "/"), dent->d_name));
+            char* resolved_path = malloc(sizeof(char) * 256);
+            realpath(path, resolved_path);
+            // puts(path);
             // puts(dent->d_name);
+            puts(resolved_path);
+            // realpath(path, resolved_path)
+            // puts();
+
             print_file_type(sb);
             printf("File size:                %jd bytes\n",
                 (intmax_t)sb->st_size);
             printf("Last file access:         %s", ctime(&sb->st_atime));
             printf("Last file modification:   %s\n\n", ctime(&sb->st_mtime));
-        }
-    }
-    chdir("..");
-    close(dir);
+            
+    // }
+    // chdir("..");
+    // close(dir);
+
+    return 0;
 }
 
 int main(int argc, char *argv[])
@@ -151,7 +161,10 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    find_recursively(argv[1], argv[2], argv[3]);
+    operator = argv[2];
+    date = argv[3];
+
+    nftw(argv[1], nftw_callback, 256, FTW_PHYS);
 
     return 0;
 }
