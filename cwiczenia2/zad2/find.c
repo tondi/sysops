@@ -9,8 +9,56 @@
 #include <sys/stat.h>
 #include <stdbool.h>
 
-void findRecursively(char* path) {
+void find_recursively(char *path, char *operator, char *date) {
 
+    struct dirent *dent;
+    char buffer[50];
+    strcpy(buffer, path);
+
+    DIR *dir;
+    dir = opendir(buffer);
+    
+    struct stat *sb = malloc(sizeof stat);
+    
+
+    if (dir != NULL)
+    {
+        while ((dent = readdir(dir)) != NULL)
+        {
+
+            // name
+            char *current_working_directory = malloc(sizeof(char) * 256);
+
+            chdir(path);
+            getcwd(current_working_directory, 256);
+
+
+            if (lstat(dent->d_name, sb) == -1)
+            {
+                perror("lstat");
+                exit(EXIT_FAILURE);
+            }
+
+            if(!modification_date_matches(&sb->st_mtime, date, operator)) {
+                continue; // ?
+            };
+
+
+            puts(dent->d_name);
+            puts(current_working_directory);
+
+            print_file_type(sb);
+
+            printf("File size:                %jd bytes\n",
+                   (intmax_t)sb->st_size);
+
+
+            printf("Last file access:         %s", ctime(&sb->st_atime));
+            printf("Last file modification:   %s\n\n", ctime(&sb->st_mtime));
+        }
+    }
+
+    close(dir);
 }
 
 /**
@@ -35,30 +83,30 @@ void print_file_type(struct stat *sb)
     printf("File type:                ");
     switch (sb->st_mode & S_IFMT)
     {
-    case S_IFREG:
-        printf("file\n");
-        break;
-    case S_IFBLK:
-        printf("block dev\n");
-        break;
-    case S_IFCHR:
-        printf("char device\n");
-        break;
-    case S_IFDIR:
-        printf("dir\n");
-        break;
-    case S_IFIFO:
-        printf("fifo\n");
-        break;
-    case S_IFLNK:
-        printf("slink\n");
-        break;
-    case S_IFSOCK:
-        printf("sock\n");
-        break;
-    default:
-        printf("unknown?\n");
-        break;
+        case S_IFREG:
+            printf("file\n");
+            break;
+        case S_IFBLK:
+            printf("block dev\n");
+            break;
+        case S_IFCHR:
+            printf("char device\n");
+            break;
+        case S_IFDIR:
+            printf("dir\n");
+            break;
+        case S_IFIFO:
+            printf("fifo\n");
+            break;
+        case S_IFLNK:
+            printf("slink\n");
+            break;
+        case S_IFSOCK:
+            printf("sock\n");
+            break;
+        default:
+            printf("unknown?\n");
+            break;
     }
 }
 
@@ -99,52 +147,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    DIR *dir;
-    struct dirent *dent;
-    char buffer[50];
-    strcpy(buffer, argv[1])
-    ;
-    dir = opendir(buffer);
-    
-    struct stat *sb = malloc(sizeof stat);
-    
-    if (dir != NULL)
-    {
-        while ((dent = readdir(dir)) != NULL)
-        {
-
-            // name
-            char *current_working_directory = malloc(sizeof(char) * 256);
-
-            chdir(argv[1]);
-            getcwd(current_working_directory, 256);
-
-
-            if (lstat(dent->d_name, sb) == -1)
-            {
-                perror("lstat");
-                exit(EXIT_FAILURE);
-            }
-
-            if(!modification_date_matches(&sb->st_mtime, argv[3], argv[2])) {
-                continue; // ?
-            };
-
-
-            puts(dent->d_name);
-            puts(current_working_directory);
-
-            print_file_type(sb);
-
-            printf("File size:                %jd bytes\n",
-                   (intmax_t)sb->st_size);
-
-
-            printf("Last file access:         %s", ctime(&sb->st_atime));
-            printf("Last file modification:   %s\n\n", ctime(&sb->st_mtime));
-        }
-    }
-    close(dir);
+    find_recursively(argv[1], argv[2], argv[3]);
 
     return 0;
 }
