@@ -1,0 +1,4 @@
+ls -la
+echo "Hello World"
+finger
+seq 1 2 10
