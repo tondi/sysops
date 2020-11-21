@@ -5,29 +5,15 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-// oblsuga cli
-// generowanie
-// czas
-
 // watch -f *.c -r 'make compile'
 
 void generate(const char* file_name, const int record_count, const int record_size);
-
-// void print_usage(char pwd[]);
 
 void sort_sys(const char *file_name, const int record_count, const int record_size);
 void sort_lib(const char *file_name, const int record_count, const int record_size);
 
 void copy_sys(const char *source, const char *destination, int record_count, int buffer_size);
 void copy_lib(const char *source, const char *destination, int record_count, int buffer_size);
-
-
-print_array(int *array, int length)
-{
-    for (int i = 0; i < length; i++) { 
-        printf("%c\n ", array[i]);
-     }
-}
 
 int main(int argc, char** argv) {
 
@@ -84,14 +70,6 @@ int main(int argc, char** argv) {
             copy_lib(src_path, dest_path, record_count, buffer_size);
         };
     }
-
-    // bool should_generate = strcmp("generate", argv[1]) == 0;
-
-    // printf("%d", should_generate);
-
-    // if(should_generate) {
-    //     generate("dane.txt", 20, 4);
-    // }
 
     return 0;
 }
@@ -157,7 +135,6 @@ void sort_sys(const char *file_name, const int record_count, const int record_si
             write(file, &ref_key, sizeof(ref_key));
             lseek(file, min * sizeof(key), SEEK_SET);
             write(file, &key, sizeof(key));
-            // array.swap(i, min);
         }
     }
 }
@@ -198,7 +175,6 @@ void sort_lib(const char *file_name, const int record_count, const int record_si
             fwrite(&ref_key, sizeof(unsigned char), (size_t) record_size, file);
             fseek(file, min * sizeof(key), SEEK_SET);
             fwrite(&key, sizeof(unsigned char), (size_t) record_size, file);
-            // array.swap(i, min);
         }
     }
 }

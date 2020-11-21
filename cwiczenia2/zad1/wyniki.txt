@@ -3,11 +3,11 @@ Sortowanie dla rozmiaru rekordu -
 
 1 bajta:
 
-./program sort dane1_lib 2500 1 lib  5,11s user 4,79s system 99% cpu 9,914 total
-./program sort dane1_sys 2500 1 sys  2,54s user 3,43s system 99% cpu 5,983 total
-
 ./program sort dane1_lib 4000 1 lib  12,95s user 11,69s system 99% cpu 24,671 total
 ./program sort dane1_sys 4000 1 sys  6,51s user 8,75s system 99% cpu 15,292 total
+
+./program sort dane1_lib 2500 1 lib  5,11s user 4,79s system 99% cpu 9,914 total
+./program sort dane1_sys 2500 1 sys  2,54s user 3,43s system 99% cpu 5,983 total
 
 4 bajtow:
 ./program sort dane1_lib 2500 4 lib  5,49s user 5,66s system 99% cpu 11,199 total

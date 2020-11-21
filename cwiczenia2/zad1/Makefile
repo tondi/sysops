@@ -2,7 +2,7 @@ compile:
 	gcc -Wall -o program program.c
 
 generate:
-	./program generate dane1 1000000 8192
+	./program generate dane1 10000 8192
 	cp dane1 dane1_lib
 	cp dane1 dane1_sys
 
