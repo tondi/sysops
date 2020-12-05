@@ -1,0 +1,2 @@
+echo "Hello World"|grep World --colour
+ls -la|grep pipe.txt
