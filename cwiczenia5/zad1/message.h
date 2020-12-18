@@ -6,20 +6,16 @@
 #define QUEUE_PERMISSIONS 0660
 
 #define REGISTER 1
-#define MIRROR 2
-#define CALC 3
-#define TIME 4
-#define END 5
-#define STOP 6
+#define TIME 2
+#define END 3
+#define STOP 4
 
 #define TO_STRING(num) ( \
     num == REGISTER ? "REGISTER" : ( \
-    num == MIRROR ? "MIRROR" : ( \
-    num == CALC ? "CALC" : ( \
     num == TIME ? "TIME" : ( \
     num == END ? "END" : ( \
     num == STOP ? "STOP" : "UNKNOWN" \
-    ))))))
+    ))))
 
 #define BUFFER_SIZE 256
 #define CLIENTS_MAX_NUM 10

@@ -52,7 +52,7 @@ void response(pid_t pid,int type,char* format,...){
 
     int client_mqid = get_client_mqid(pid);
     
-    printf("Server sends %s \"%s\" to client %d\n",TO_STRING(message.message_type),message.message_text.buf,(int) pid);
+    printf("Server sends %s \"%s\" to client %d\n", TO_STRING(message.message_type),message.message_text.buf,(int) pid);
 
     if (msgsnd (client_mqid, &message, sizeof (struct message_text), 0) == -1) {
         perror ("client msgsnd error");
@@ -88,40 +88,6 @@ void process_register(pid_t pid,char *buffer){
         response(pid,REGISTER,"%d",clients_num-1);
         
     }
-}
-
-void process_mirror(pid_t pid,char *buffer){
-    response(pid,MIRROR,"%s",reverse(buffer));
-}
-
-void process_calc(pid_t pid,char *buffer){
-
-    int a,b;
-    char operation;
-
-    if(sscanf(buffer, "%d %c %d", &a,&operation,&b) < 0){
-        perror("can't scanf calculator expresion");
-        exit (EXIT_FAILURE);
-    } 
-
-    switch(operation){
-        case '+':
-            a=a+b;
-            break;
-        case '-':
-            a=a-b;
-            break;
-        case '*':
-            a=a*b;
-            break;
-        case '/':
-            a=a/b;
-            break;                              
-        default:
-            perror("illegal calculator operation");
-            exit (EXIT_FAILURE);
-    }
-    response(pid,REGISTER,"%d",a);
 }
 
 void process_time(pid_t pid,char *buffer){
@@ -179,12 +145,6 @@ void receive(){
     switch (message.message_type){
         case REGISTER:
             process_register(message.message_text.pid,message.message_text.buf);
-            break;
-        case MIRROR:
-            process_mirror(message.message_text.pid,message.message_text.buf);
-            break;
-        case CALC:
-            process_calc(message.message_text.pid,message.message_text.buf);
             break;
         case TIME:
             process_time(message.message_text.pid,message.message_text.buf);
