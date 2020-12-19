@@ -15,7 +15,7 @@ int server_mqid,my_mqid;
 
 FILE*file;
 
-void send_message(int type,char* format,...){
+void send_message(int type,char* format, ...){
 
     struct message message;
     message.message_text.pid=getpid();
@@ -25,7 +25,7 @@ void send_message(int type,char* format,...){
     va_start(ap,format);
     vsprintf(message.message_text.buf,format,ap);
     
-    printf("Client %d sends %s \"%s\" to server\n",getpid(),TO_STRING(message.message_type),message.message_text.buf);
+    printf("Client: Message %s \"%s\" sent to server by client %d\n", message.message_text.buf, TO_STRING(message.message_type), getpid());
 
     if (msgsnd (server_mqid, &message, sizeof (struct message_text), 0) == -1) {
         perror ("client msgsnd error");
@@ -56,7 +56,7 @@ void receive_message(){
         exit (EXIT_FAILURE);
     }
 
-    printf ("Client %d received %s \"%s\" from server\n\n",getpid(),TO_STRING(message.message_type),message.message_text.buf);  
+    printf ("Client: Client %d received %s \"%s\" from server\n", getpid(), TO_STRING(message.message_type),message.message_text.buf);  
 }
 
 int read_message_type(){
@@ -156,7 +156,7 @@ int main (int argc, char **argv){
         exit (EXIT_FAILURE);        
     } 
 
-    printf("New client %d\n", getpid());
+    printf("> Attached new client %d\n", getpid());
 
     send_message(REGISTER,"%d",my_mqid);
     receive_message();

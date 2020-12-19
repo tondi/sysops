@@ -4,7 +4,7 @@ CPPFLAGS=
 SLAVE=client
 MASTER=server
 HEADER=message.h
-FILE=commands.txt
+FILE=input.txt
 
 all: $(SLAVE) $(MASTER)
 

@@ -32,7 +32,7 @@ int get_client_mqid(pid_t pid){
 
 void remove_queue(void){
 
-    printf("Server removes queue\n");
+    printf("> Removing queue\n");
 
     if (msgctl (qid, IPC_RMID, NULL) == -1) {
         perror ("server msgctl error");
@@ -52,7 +52,7 @@ void response(pid_t pid,int type,char* format,...){
 
     int client_mqid = get_client_mqid(pid);
     
-    printf("Server sends %s \"%s\" to client %d\n", TO_STRING(message.message_type),message.message_text.buf,(int) pid);
+    printf("Server: Sending %s \"%s\" to client %d\n", TO_STRING(message.message_type),message.message_text.buf,(int) pid);
 
     if (msgsnd (client_mqid, &message, sizeof (struct message_text), 0) == -1) {
         perror ("client msgsnd error");
@@ -133,14 +133,14 @@ void receive(){
 
     if (msgrcv (qid, &message, sizeof (struct message_text), 0, msgflg) == -1) {
         if(end_flag){
-            printf("Server ends...");
+            printf("> Server exit\n"); 
             exit (EXIT_SUCCESS); //no bo skonczyly sie wiadomosci, a jest flaga IPC_NOWAIT
         }
         perror ("server msgrcv error");
         exit (EXIT_FAILURE);
     }
 
-    printf("Server receives %s \"%s\" from client %d\n",TO_STRING(message.message_type),message.message_text.buf,message.message_text.pid);
+    printf("Server: Message %s \"%s\" received from client %d\n", message.message_text.buf, TO_STRING(message.message_type), message.message_text.pid);
 
     switch (message.message_type){
         case REGISTER:
