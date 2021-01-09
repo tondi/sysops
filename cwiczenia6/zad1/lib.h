@@ -24,7 +24,7 @@
 // };
 
 extern unsigned short* initArrayBuf;
-extern void onExit(int);
+extern void handleExit(int);
 
 key_t CreateKey(char* name, int num);
 int CreateSemaphores(key_t k, int numOfSems);

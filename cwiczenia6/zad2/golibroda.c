@@ -14,7 +14,7 @@ sem_t* SemT;
 struct Queue* Data;
 size_t N;
 
-void onExit(int t){
+void handleExit(int t){
     CloseSemaphore(SemQ);
     CloseSemaphore(SemB);
     CloseSemaphore(SemT);
@@ -25,48 +25,46 @@ void onExit(int t){
     exit(0);
 }
 
-
-
 int main(int c, char* v[]){
     if(c < 2){
-        printf("Uzycie programu: ./b N\n");
+        printf("Uzycie programu: ./barber N\n");
         printf("N - liczba siedzen w kolejce do golibrody.\n");
         return 0;
     }
-    signal(SIGINT, onExit);
-    signal(SIGTERM, onExit);
+    signal(SIGINT, handleExit);
+    signal(SIGTERM, handleExit);
     SemQ = CreateSemaphore(QUEUE, 1);
     SemB = CreateSemaphore(BARBER, 1);
     SemT = CreateSemaphore(BARBER_TEST, 1);
     
     N = atoi(v[1]);
     Data = (struct Queue*)CreateSharedMem(QUEUE, sizeof(struct Queue));
-    QInit(Data, N);
+    QueueInit(Data, N);
     
     while(1){
         Take(SemQ);
-            int v = QEmpty(Data);
+            int v = QueueEmpty(Data);
         Release(SemQ);
         if(v == 1){
-            printf("Zasypianie.\n");
+            printf("Zaśnięcie.\n");
                 Take(SemB);
                 Take(SemB);
-            printf("Wstaje.\n");
+            printf("Obudzenie.\n");
         }
         Take(SemQ);
-            int pid = QGet(Data);
+            int pid = QueueGet(Data);
         Release(SemQ);
         
-        printf("Strzyrzenie %d.\n", pid);
+        printf("Strzyzenie %d.\n", pid);
         
         //praca
         sleep(1);
 
-        printf("Zatrzymanie strzyzenia %d.\n", pid);
+        printf("Zakończenie strzyzenia %d.\n", pid);
         kill(pid, SIGUSR1);
     }
     
-    onExit(0);
+    handleExit(0);
 }
 
 

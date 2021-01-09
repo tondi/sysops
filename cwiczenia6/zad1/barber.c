@@ -13,13 +13,6 @@
 
 #include "queue.h"
 
-//sem1:
-//  0 - fryzjer pracuje
-//  <0 -fryzjer spi
-//sem2: 
-//  0 - klient moze wejsc do kolejki
-// <0 - klient bedzie mogl wejsc do kolejki pozniej 
-
 key_t k;
 int semid;
 int shmid;
@@ -27,7 +20,7 @@ struct Queue* data;
 int numOfSems = 2;
 int N = 5;
 
-void onExit(int t){
+void handleExit(int t){
     ReleaseSemaphores(semid);
     
     shmctl(shmid, IPC_RMID, NULL);
@@ -37,47 +30,48 @@ void onExit(int t){
 
 int main(int c, char* v[]){
     if(c < 2){
-        printf("Uzycie programu: ./b N\n");
-        printf("N - liczba siedzen w kolejce do golibrody.\n");
+        printf("Usage: ./barber <ilosc miejsc w kolejce>\n");
         return 0;
     }
-    signal(SIGINT, onExit);
-    signal(SIGTERM, onExit);
+    signal(SIGINT, handleExit);
+    signal(SIGTERM, handleExit);
     
     //printf("%ld\n%ld\n%ld\n", sizeof(struct Queue), sizeof(int), sizeof(int*));
     N = atoi(v[1]);
-    k = CreateKey("newkey.txt", 4);
+    k = CreateKey("queuekey.txt", 4);
     semid = CreateSemaphores(k, numOfSems);
     shmid = CreateSharedMem(k, sizeof(struct Queue));
     data = (struct Queue*)GetMemPointer(shmid);
-    QInit(data, N);
+    QueueInit(data, N);
     Add(semid, QUEUE_ID, 1);
     Add(semid, BARBER_ID, 1);
+    printf("Queue size: %d.\n", data->size);
     while(1){
         Add(semid, QUEUE_ID, -1);
-        int v = QEmpty(data);
+        int v = QueueEmpty(data);
         Add(semid, QUEUE_ID, 1);
         if(v == 1){
-            printf("Zasypianie.\n");
+            printf("Zaśnięcie.\n");
             Add(semid, BARBER_ID, -1);
             Add(semid, BARBER_ID, -1);
-            printf("Wstaje\n");
+            printf("Obudzenie\n");
         }
         Add(semid, QUEUE_ID, -1);
-        printf("Q: in = %d, out = %d, size = %d.\n", data->queueIn, data->queueOut, data->size);
-        int pid = QGet(data);
+        printf("Queue in: %d, Queue out: %d\n", data->queueIn, data->queueOut);
+        int pid = QueueGet(data);
         Add(semid, QUEUE_ID, 1);
-        printf("Strzyrzenie %d.\n", pid);
-        
+        printf("Zaproszenie klienta %d z poczekalni do strzyżenia.\n", pid);
+        printf("Rozpoczęcie strzyżenia klienta %d.\n", pid);
+
         //Symulacja pracy
         sleep(3);
         
-        printf("Zatrzymanie strzyzenia %d.\n", pid);
+        printf("Zakończenie strzyzenia %d.\n", pid);
         kill(pid, SIGUSR1);
     }
     
     
-    onExit(0);
+    handleExit(0);
 }
 
 

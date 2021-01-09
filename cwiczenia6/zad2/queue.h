@@ -6,15 +6,15 @@
 #include "lib.h"
 
 struct Queue{
-    int elems[500];
+    int items[500];
     int size;
     int queueIn;
     int queueOut;
 };
 
-void QInit(struct Queue* q, int size);
-int QPut(struct Queue* q, int e);
-int QGet(struct Queue* q);
-int QEmpty(struct Queue* q);
+void QueueInit(struct Queue* q, int size);
+int QueuePut(struct Queue* q, int e);
+int QueueGet(struct Queue* q);
+int QueueEmpty(struct Queue* q);
 
 #endif

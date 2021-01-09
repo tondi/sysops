@@ -1,3 +1,4 @@
+
 #ifndef _LIB_H_
 #define _LIB_H_
 
@@ -12,7 +13,7 @@
 #include <sys/types.h>
 #include <sys/shm.h>    
 
-extern void onExit(int);
+extern void handleExit(int);
 
 sem_t* CreateSemaphore(const char* name, unsigned int initVal);
 sem_t* GetSemaphore(const char* name);

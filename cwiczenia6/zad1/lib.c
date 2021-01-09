@@ -2,12 +2,34 @@
 
 unsigned short* initArrayBuf = NULL;
 
-key_t CreateKey(char* name, int num){
-    key_t k = ftok("newkey.txt", 4);
-    if(k == -1){
-        fprintf(stderr, "Nie udalo sie stworzyc klucza!\n");
+
+int CreateSharedMem(key_t k, int size){
+    int shmid = shmget(k, size, 0666 | IPC_CREAT);
+    if(shmid == -1){
+        fprintf(stderr, "Error: Cannot create shared memory!\n");
         perror(strerror(errno));
-        onExit(0);
+        handleExit(0);
+    }
+    return shmid;
+}
+
+
+int GetSharedMem(key_t key){
+    int shmid = shmget(key, 0, 0);
+    if (shmid == -1) {
+        fprintf(stderr, "Error: Cannot access shared memory\n");
+        perror(strerror(errno));
+        handleExit(0);
+    }
+    return shmid;
+}
+
+key_t CreateKey(char* name, int num){
+    key_t k = ftok("queuekey.txt", 4);
+    if(k == -1){
+        fprintf(stderr, "Error: Nie udalo sie stworzyc klucza!\n");
+        perror(strerror(errno));
+        handleExit(0);
     }
     return k;
 }
@@ -15,9 +37,9 @@ key_t CreateKey(char* name, int num){
 int CreateSemaphores(key_t k, int numOfSems){
     int semid = semget(k, numOfSems, 0666 | IPC_CREAT);
     if(semid == -1){
-        fprintf(stderr, "Nie udalo sie stworzyc semafor!\n");
+        fprintf(stderr, "Error: Cannot create semaphore!\n");
         perror(strerror(errno));
-        onExit(0);
+        handleExit(0);
     }
     union semun init;
     init.array = (unsigned short*) malloc(numOfSems*sizeof(unsigned short));
@@ -39,42 +61,19 @@ void ReleaseSemaphores(int semid){
 int GetSemaphores(key_t key){
     int semid = semget(key, 0, 0);
     if (semid == -1) {
-        fprintf(stderr, "Nie uzyskano dostepu do semafor\n");
+        fprintf(stderr, "Error: Cannot access semaphore\n");
         perror(strerror(errno));
-        onExit(0);
+        handleExit(0);
     }
     return semid;
 }
 
-int CreateSharedMem(key_t k, int size){
-    int shmid = shmget(k, size, 0666 | IPC_CREAT);
-    if(shmid == -1){
-        fprintf(stderr, "Nie udalo sie stworzyc pamieci wspoldzielonej!\n");
-        perror(strerror(errno));
-        onExit(0);
-    }
-    return shmid;
-}
-
-
-int GetSharedMem(key_t key){
-    int shmid = shmget(key, 0, 0);
-    if (shmid == -1) {
-        fprintf(stderr, "Nie uzyskano dostepu do pamieci wspoldzielonej\n");
-        perror(strerror(errno));
-        onExit(0);
-    }
-    return shmid;
-}
-
-//void ReleaseSharedMem(
-
 int* GetMemPointer(int shmid){
     int* data = (int*)shmat(shmid, NULL, 0);
     if(data == (int*)(-1)) {
-        fprintf(stderr, "Nie uzyskano dostepu do pamieci wspoldzielonej!\n");
+        fprintf(stderr, "Error: Cannot access shared memory!\n");
         perror(strerror(errno));
-        onExit(0);
+        handleExit(0);
     }
     return data;
 }

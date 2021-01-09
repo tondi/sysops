@@ -1,13 +1,13 @@
 CC=gcc
 OPT=-Wall
-LIBS= -lpthread -lrt
+LIBS= -lpthread
 
-all: clean c b
+all: clean client barber
 
-b: golibroda.c lib.c queue.c
+barber: barber.c lib.c queue.c
 	$(CC) $^ -o $@ $(OPT) $(LIBS)
-c: client.c lib.c queue.c
+client: client.c lib.c queue.c
 	$(CC) $^ -o $@ $(OPT) $(LIBS)
 
 clean:
-	rm -f c b test
+	rm -f client barber test
